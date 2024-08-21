@@ -3,7 +3,7 @@ import axios from "axios";
 export const getHomeCalendar = async (token: string) => {
   try {
     const response = await axios.get(
-      "http://192.168.100.20:8000/api/calendars",
+      `${process.env.EXPO_PUBLIC_API_URL}/calendars`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -19,7 +19,7 @@ export const getHomeCalendar = async (token: string) => {
 export const addEvent = async (data: any, token: string) => {
   try {
     const response = await axios.post(
-      "http://192.168.100.20:8000/api/calendars",
+      `${process.env.EXPO_PUBLIC_API_URL}/calendars`,
       data,
       {
         headers: {
@@ -36,7 +36,7 @@ export const addEvent = async (data: any, token: string) => {
 export const deleteEvent = async (id: any, token: string) => {
   try {
     const response = await axios.delete(
-      `http://192.168.100.20:8000/api/calendars/${id}`,
+      `${process.env.EXPO_PUBLIC_API_URL}/calendars/${id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -52,7 +52,7 @@ export const deleteEvent = async (id: any, token: string) => {
 export const calendarById = async (id: any, token: string) => {
   try {
     const response = await axios.get(
-      `http://192.168.100.20:8000/api/calendars/${id}`,
+      `${process.env.EXPO_PUBLIC_API_URL}/calendars/${id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -67,8 +67,8 @@ export const calendarById = async (id: any, token: string) => {
 
 export const updateEvents = async (id: any, data: any, token: string) => {
   try {
-    const response = await axios.put(
-      `http://192.168.100.20:8000/api/calendars/${id}`,
+    const response = await axios.patch(
+      `${process.env.EXPO_PUBLIC_API_URL}/calendars/${id}`,
       data,
       {
         headers: {

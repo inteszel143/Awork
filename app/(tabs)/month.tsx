@@ -15,6 +15,19 @@ const Page = () => {
     const { token } = useUserStore();
     const { data, isPending } = useHomeCalendar(isFocused, token);
 
+    const getMarkedDates = (data: any) => {
+        const markedDates: { [key: string]: any } = {};
+        data.forEach((item: any) => {
+            const date = item.date_time_start.split(' ')[0];
+            markedDates[date] = {
+                selected: true,
+                marked: true,
+                selectedColor: '#00B4D8',
+            };
+        });
+        return markedDates;
+    };
+    const markedDates = getMarkedDates(data);
     return (
         <View style={styles.container}>
             <View >
@@ -54,13 +67,7 @@ const Page = () => {
                 // onDayPress={(day: any) => {
                 //     setSelected(day.dateString);
                 // }}
-                markedDates={{
-                    [formattedCurrentDate]: {
-                        marked: true,
-                        dotColor: '#0A5CA8',
-                    },
-                    [selected]: { selected: true, disableTouchEvent: true, selectedDotColor: 'orange' }
-                }}
+                markedDates={markedDates}
 
 
 

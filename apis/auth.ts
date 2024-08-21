@@ -7,7 +7,7 @@ export const loginUser = async (email: string, password: string) => {
       password: password,
     };
     const response = await axios.post(
-      `http://192.168.100.20:8000/api/auth/login`,
+      `${process.env.EXPO_PUBLIC_API_URL}/auth/login`,
       data,
       {
         headers: {

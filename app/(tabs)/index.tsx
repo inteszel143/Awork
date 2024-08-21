@@ -9,7 +9,7 @@ import { useHomeCalendar } from '@/query/homeQuery';
 import { useIsFocused } from '@react-navigation/native';
 import { deleteEvent, getHomeCalendar } from '@/apis/home';
 import { filterBySelectedDate } from '@/utils/validate';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { convertDateToLongFormat } from '@/utils/format';
 import { useQueryClient } from '@tanstack/react-query';
 import EditModal from '@/components/EditModal';
@@ -22,10 +22,9 @@ const Page = () => {
   const { token } = useUserStore();
   const { data, isPending } = useHomeCalendar(isFocused, token);
   const filteredData = filterBySelectedDate(data, selected);
-  const [id, setId] = useState<string>("");
+  const [items, setItems] = useState<any>();
 
-  const [showModal, setShowModal] = useState<boolean>(true);
-
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const handleDeleteEvent = async (id: any) => {
     try {
@@ -35,12 +34,12 @@ const Page = () => {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
       <StatusBar style='light' />
-      {showModal && <EditModal modalVisible={showModal} setModalVisible={setShowModal} eventId={id} />}
+      {showModal && <EditModal modalVisible={showModal} setModalVisible={setShowModal} item={items} />}
       <View>
         <AddButton />
       </View>
@@ -108,7 +107,7 @@ const Page = () => {
                 <TouchableOpacity style={styles.btnStyle}
                   onPress={() => {
                     setShowModal(true);
-                    setId(item?.id);
+                    setItems(item);
                   }}
                 >
                   <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -120,7 +119,7 @@ const Page = () => {
                     <TouchableOpacity
                       onPress={() => handleDeleteEvent(item?.id)}
                     >
-                      <Ionicons name='trash-outline' size={hp(2.5)} color={'red'} />
+                      <MaterialCommunityIcons name='trash-can-outline' size={hp(2.6)} color={'red'} />
                     </TouchableOpacity>
                   </View>
                 </TouchableOpacity>

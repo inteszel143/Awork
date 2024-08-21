@@ -39,3 +39,8 @@ export const convertDateToLongFormat = (dateString: any) => {
   // Format as "Month Day, Year"
   return `${month} ${day}, ${year}`;
 };
+
+export const convertToISOString = (dateString: any) => {
+  const date = new Date(dateString.replace(" ", "T") + "Z");
+  return date.toISOString();
+};

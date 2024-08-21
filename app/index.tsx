@@ -46,6 +46,7 @@ const Page = () => {
                 setLoading(false);
             }, 2000);
         } catch (error) {
+            console.log(error);
             setShowModal(true);
             setLoading(false);
         }
@@ -55,76 +56,80 @@ const Page = () => {
     return (
         <View style={styles.container}>
             {showModal && <ErrorLoginModal modalVisible={showModal} setModalVisible={setShowModal} />}
-            <Image
-                source={require('@/assets/images/icon.png')}
-                resizeMode='contain'
-                style={styles.imageStyle}
-            />
 
-            <View style={[styles.textField, { marginTop: hp(5), borderColor: emailError ? "red" : "#FFFFFF" }]}>
-                <View style={styles.innerField}>
-                    <Ionicons name='mail' size={hp(2.5)} color={'#9E9E9E'} />
-                    <TextInput
-                        placeholder='Email'
-                        placeholderTextColor={'#9E9E9E'}
-                        autoCapitalize="none"
-                        autoComplete='email'
-                        onFocus={() => {
-                            setEmailError(false)
-                        }}
-                        onChangeText={(text) => setEmail(text)}
-                        autoCorrect={false}
-                        keyboardType="email-address"
-                        style={styles.textInputStyle}
-                    />
+            <ScrollView>
 
+                <Image
+                    source={require('@/assets/images/icon.png')}
+                    resizeMode='contain'
+                    style={styles.imageStyle}
+                />
+
+
+                <View style={[styles.textField, { marginTop: hp(5), borderColor: emailError ? "red" : "#FFFFFF" }]}>
+                    <View style={styles.innerField}>
+                        <Ionicons name='mail' size={hp(2.5)} color={'#9E9E9E'} />
+                        <TextInput
+                            placeholder='Email'
+                            placeholderTextColor={'#9E9E9E'}
+                            autoCapitalize="none"
+                            autoComplete='email'
+                            onFocus={() => {
+                                setEmailError(false)
+                            }}
+                            onChangeText={(text) => setEmail(text)}
+                            autoCorrect={false}
+                            keyboardType="email-address"
+                            style={styles.textInputStyle}
+                        />
+
+                    </View>
                 </View>
-            </View>
 
 
-            <View style={[styles.textField, { borderColor: passwordError ? 'red' : '#FFFFFF' }]}>
-                <View style={styles.innerField}>
-                    <Ionicons name='lock-closed' size={hp(2.5)} color={'#9E9E9E'} />
-                    <TextInput
-                        placeholder='Password'
-                        onChangeText={(text) => setPassword(text)}
-                        autoCapitalize="none"
-                        onFocus={() => {
-                            setPasswordError(false)
-                        }}
-                        secureTextEntry={showPassword}
-                        placeholderTextColor={'#9E9E9E'}
-                        style={styles.textInputStyle}
-                    />
+                <View style={[styles.textField, { borderColor: passwordError ? 'red' : '#FFFFFF' }]}>
+                    <View style={styles.innerField}>
+                        <Ionicons name='lock-closed' size={hp(2.5)} color={'#9E9E9E'} />
+                        <TextInput
+                            placeholder='Password'
+                            onChangeText={(text) => setPassword(text)}
+                            autoCapitalize="none"
+                            onFocus={() => {
+                                setPasswordError(false)
+                            }}
+                            secureTextEntry={showPassword}
+                            placeholderTextColor={'#9E9E9E'}
+                            style={styles.textInputStyle}
+                        />
 
 
-                    <TouchableOpacity onPress={toggleCheckPassword}>
-                        <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={hp(2.5)} color={'#9E9E9E'} />
+                        <TouchableOpacity onPress={toggleCheckPassword}>
+                            <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={hp(2.5)} color={'#9E9E9E'} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+
+                <TouchableOpacity style={styles.btnStyle} onPress={onSubmit}>
+                    {loading ? <ActivityIndicator size={'small'} color={'white'} /> : <Text style={styles.btnText}>Login</Text>}
+                </TouchableOpacity>
+
+
+                <View style={styles.footer}>
+                    <TouchableOpacity onPress={() => router.push('/register')}
+                        style={styles.footerBtn}
+                    >
+                        <Text style={styles.footerText}>Create Account</Text>
+                    </TouchableOpacity>
+                    <Text>|</Text>
+                    <TouchableOpacity
+                        style={styles.footerBtn}
+                    >
+                        <Text style={styles.footerText}>Forgot Password</Text>
                     </TouchableOpacity>
                 </View>
-            </View>
 
-
-            <TouchableOpacity style={styles.btnStyle} onPress={onSubmit}>
-                {loading ? <ActivityIndicator size={'small'} color={'white'} /> : <Text style={styles.btnText}>Login</Text>}
-            </TouchableOpacity>
-
-
-            <View style={styles.footer}>
-                <TouchableOpacity onPress={() => router.push('/register')}
-                    style={styles.footerBtn}
-                >
-                    <Text style={styles.footerText}>Create Account</Text>
-                </TouchableOpacity>
-                <Text>|</Text>
-                <TouchableOpacity
-                    style={styles.footerBtn}
-                >
-                    <Text style={styles.footerText}>Forgot Password</Text>
-                </TouchableOpacity>
-            </View>
-
-
+            </ScrollView>
 
         </View>
     )
@@ -142,6 +147,8 @@ const styles = StyleSheet.create({
     imageStyle: {
         width: wp(80),
         height: hp(20),
+        marginTop: hp(14),
+        alignSelf: 'center'
     },
     textField: {
         width: wp(90),
@@ -176,7 +183,8 @@ const styles = StyleSheet.create({
         marginTop: hp(4),
         flexDirection: 'row',
         alignItems: 'center',
-        gap: wp(4)
+        gap: wp(4),
+        alignSelf: 'center'
     },
     footerText: {
         fontFamily: 'UrbanistSemiBold',

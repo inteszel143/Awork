@@ -3,46 +3,59 @@ import React, { useState } from 'react'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import DatePicker from 'react-native-date-picker';
 import { Ionicons } from '@expo/vector-icons';
-import { addEvent } from '@/apis/home';
+import { addEvent, updateEvents } from '@/apis/home';
 import useUserStore from '@/store/useUserStore';
-import { formatDate } from '@/utils/format';
+import { convertToISOString, formatDate } from '@/utils/format';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCalendarById } from '@/query/homeQuery';
 import { useIsFocused } from '@react-navigation/native';
-
 interface ModalProps {
     modalVisible: boolean;
-    eventId: string;
+    item: any;
     setModalVisible: React.Dispatch<React.SetStateAction<boolean>>; // Ensure correct typing
 }
-
-export default function EditModal({ modalVisible, setModalVisible, eventId }: ModalProps) {
-    const { token } = useUserStore();
+export default function EditModal({ modalVisible, setModalVisible, item }: ModalProps) {
+    const { token, userId } = useUserStore();
     const isFocused = useIsFocused();
     const queryClient = useQueryClient();
     const [loading, setLoading] = useState<boolean>(false);
-    const { data, isPending } = useCalendarById(eventId, token, isFocused);
-    const [date, setDate] = useState(new Date());
+    // const { data, isPending } = useCalendarById(item?.id, token, isFocused);
+    const convert = convertToISOString(item?.date_time_start);
+    const [date, setDate] = useState(new Date(convert));
     const [open, setOpen] = useState(false)
-    const [title, setTitle] = useState<string>(data?.title);
-    const [desc, setDesc] = useState<string>(data?.description);
+    const [title, setTitle] = useState<string>(item?.title);
+    const [desc, setDesc] = useState<string>(item?.description);
     const formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    const format = formatDate(date);
+    const addOneDay = (dateString: any) => {
+        const date = new Date(dateString);
+        date.setDate(date.getDate() + 1);
+        return date.toISOString();
+    };
+    const tomorrow = formatDate(addOneDay(date));
 
+    const data = {
+        "user_id": userId,
+        "title": title as string,
+        "description": desc as string,
+        "date_time_start": format,
+        "date_time_end": tomorrow,
+        "is_private": true
+    };
 
     const onSubmit = async () => {
         setLoading(true);
-        // try {
-        //     const result = await addEvent(data, token);
-        //     queryClient.invalidateQueries({ queryKey: ['home-calendar'] });
-        //     // console.log(result);
-        //     setTimeout(() => {
-        //         setModalVisible(false);
-        //         setLoading(false);
-        //     }, 1500)
-        // } catch (error) {
-        //     console.log(error)
-        //     setLoading(false);
-        // }
+        try {
+            const result = await updateEvents(item?.id, data, token);
+            queryClient.invalidateQueries({ queryKey: ['home-calendar'] });
+            setTimeout(() => {
+                setModalVisible(false);
+                setLoading(false);
+            }, 1500)
+        } catch (error) {
+            console.log(error)
+            setLoading(false);
+        }
     };
 
 
@@ -66,7 +79,7 @@ export default function EditModal({ modalVisible, setModalVisible, eventId }: Mo
                             <View style={styles.textField}>
                                 <TextInput
                                     placeholder='Enter here...'
-                                    defaultValue={data?.title}
+                                    defaultValue={item?.title}
                                     onChangeText={(text) => setTitle(text)}
                                     style={styles.textInputStyle}
                                 />
@@ -78,7 +91,7 @@ export default function EditModal({ modalVisible, setModalVisible, eventId }: Mo
                             <View style={[styles.textField, { height: hp(9) }]}>
                                 <TextInput
                                     placeholder='Enter here...'
-                                    defaultValue={data?.description}
+                                    defaultValue={item?.description}
                                     multiline={true}
                                     onChangeText={(text) => setDesc(text)}
                                     numberOfLines={3}
@@ -142,7 +155,7 @@ const styles = StyleSheet.create({
     },
     modalBox: {
         width: wp(92),
-        height: Platform.OS === 'ios' ? hp(56) : hp(75),
+        height: Platform.OS === 'ios' ? hp(74) : hp(75),
         backgroundColor: "white",
         borderRadius: wp(5),
         alignItems: 'center',

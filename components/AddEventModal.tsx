@@ -24,12 +24,12 @@ export default function AddEventModal({ modalVisible, setModalVisible }: ModalPr
     const [loading, setLoading] = useState<boolean>(false);
     const formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
     const format = formatDate(date);
-
-    const getTomorrowDate = (today: any) => {
-        today.setDate(today.getDate() + 1); // Add one day to the current date
-        return today;
+    const addOneDay = (dateString: any) => {
+        const date = new Date(dateString);
+        date.setDate(date.getDate() + 1);
+        return date.toISOString();
     };
-    const tomorrow = formatDate(getTomorrowDate(date));
+    const tomorrow = formatDate(addOneDay(date));
 
 
     const data = {
@@ -79,6 +79,7 @@ export default function AddEventModal({ modalVisible, setModalVisible }: ModalPr
                             <View style={styles.textField}>
                                 <TextInput
                                     placeholder='Enter here...'
+                                    placeholderTextColor={'#9E9E9E'}
                                     onChangeText={(text) => setTitle(text)}
                                     style={styles.textInputStyle}
                                 />
@@ -89,6 +90,7 @@ export default function AddEventModal({ modalVisible, setModalVisible }: ModalPr
                             <View style={[styles.textField, { height: hp(9) }]}>
                                 <TextInput
                                     placeholder='Enter here...'
+                                    placeholderTextColor={'#9E9E9E'}
                                     multiline={true}
                                     onChangeText={(text) => setDesc(text)}
                                     numberOfLines={3}
@@ -121,7 +123,6 @@ export default function AddEventModal({ modalVisible, setModalVisible }: ModalPr
                             </View>
                         </View>
 
-
                         <TouchableOpacity style={[styles.saveBtn, { backgroundColor: !title && !desc ? '#DADADA' : '#00B4D8', }]}
                             disabled={!title && !desc ? true : false}
                             onPress={onSubmit}
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
     },
     modalBox: {
         width: wp(92),
-        height: Platform.OS === 'ios' ? hp(56) : hp(75),
+        height: Platform.OS === 'ios' ? hp(74) : hp(75),
         backgroundColor: "white",
         borderRadius: wp(5),
         alignItems: 'center',
